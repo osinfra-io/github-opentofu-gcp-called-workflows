@@ -209,7 +209,7 @@ jobs:
           path: |
             ${{ inputs.working_directory }}/.terraform
             ${{ inputs.working_directory }}/.terraform.lock.hcl
-            ${{ inputs.working_directory }}/plan.out.gpg
+            ${{ inputs.working_directory }}/plan.out
           key: ${{ inputs.opentofu_workspace }}-${{ github.run_id }}-${{ github.run_attempt }}
 
       # Setup OpenTofu
