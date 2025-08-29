@@ -2,7 +2,7 @@
 # https://github.com/osinfra-io/opentofu-google-project
 
 module "project" {
-  source = "github.com/osinfra-io/opentofu-google-project?ref=f00d14e22e192f63d910cabd73b04340281a9713"
+  source = "github.com/osinfra-io/opentofu-google-project?ref=f00d14e22e192f63d910cabd73b04340281a9713" # v0.4.6
 
   cis_2_2_logging_sink_project_id = var.project_cis_2_2_logging_sink_project_id
   description                     = "workflow"
@@ -15,7 +15,7 @@ module "project" {
 # https://github.com/osinfra-io/opentofu-google-storage-bucket
 
 module "bucket" {
-  source = "github.com/osinfra-io/opentofu-google-storage-bucket?ref=642c3eb45623e0e619dcc3c80c98ef804da7c153"
+  source = "github.com/osinfra-io/opentofu-google-storage-bucket?ref=642c3eb45623e0e619dcc3c80c98ef804da7c153" # v0.2.1
 
   force_destroy = true
   labels        = module.helpers.labels
