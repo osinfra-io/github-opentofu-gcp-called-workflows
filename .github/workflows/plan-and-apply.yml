@@ -9,10 +9,7 @@ on:
       github_environment:
         required: true
         type: string
-      service_account:
-        required: true
-        type: string
-      opentofu_version:
+      opentofu_kms_encryption_key:
         required: true
         type: string
       opentofu_plan_args:
@@ -21,7 +18,13 @@ on:
       opentofu_state_bucket:
         required: true
         type: string
+      opentofu_version:
+        required: true
+        type: string
       opentofu_workspace:
+        required: true
+        type: string
+      service_account:
         required: true
         type: string
       working_directory:
@@ -48,11 +51,17 @@ permissions:
   contents: read
   id-token: write
 
-# If you use private modules you'll need this env variable to use
-# the same ssh-agent socket value across all jobs & steps.
+env:
+  # Early variable evaluation required for backend and provider configuration
 
-# env:
-#  SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+  TF_VAR_kms_encryption_key: ${{ inputs.opentofu_kms_encryption_key }}
+  TF_VAR_state_bucket: ${{ inputs.opentofu_state_bucket }}
+
+  # If you use private modules you'll need this env variable to use
+  # the same ssh-agent socket value across all jobs & steps.
+
+  # SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+
 
 jobs:
   plan:
@@ -68,7 +77,7 @@ jobs:
       # https://github.com/marketplace/actions/cache
 
       - name: Setup cache
-        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.0
         with:
           path: |
             ${{ inputs.working_directory }}/.terraform
@@ -81,7 +90,7 @@ jobs:
       # https://github.com/marketplace/actions/checkout
 
       - name: Checkout
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v4.2.2
         with:
           ref: ${{ inputs.checkout_ref }}
 
@@ -89,7 +98,7 @@ jobs:
       # https://github.com/marketplace/actions/authenticate-to-google-cloud
 
       - name: Authenticate
-        uses: google-github-actions/auth@b7593ed2efd1c1617e1b0254da33b86225adb2a5
+        uses: google-github-actions/auth@b7593ed2efd1c1617e1b0254da33b86225adb2a5 # v2.1.6
         with:
           create_credentials_file: true
           service_account: ${{ inputs.service_account }}
@@ -117,7 +126,7 @@ jobs:
         run: tofu fmt -check -diff
 
       - name: OpenTofu initialize
-        run: tofu init -backend-config="bucket=${{ inputs.opentofu_state_bucket }}"
+        run: tofu init
 
       - name: OpenTofu workspace
         run: >-
@@ -137,7 +146,7 @@ jobs:
 
       - name: OpenTofu summary
         continue-on-error: true
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         env:
           TEST_STDOUT: ${{ steps.show.outputs.stdout }}
         with:
@@ -146,16 +155,6 @@ jobs:
             core.summary
               .addCodeBlock(testResults, 'hcl')
               .write();
-
-      # Encrypt - OpenTofu plan.out
-
-      # If your plan includes any sort of sensitive data, even if obscured in OpenTofu's terminal output,
-      # it will be saved in cleartext in the plan file. You should therefore treat any saved plan files as
-      # potentially-sensitive artifacts.
-
-      - name: Encrypt
-        if: steps.plan.outputs.exitcode == 2
-        run: gpg --quiet --batch --yes --passphrase ${{ secrets.gpg_passphrase }} --symmetric --cipher-algo AES256 plan.out
 
     outputs:
       plan-exit-code: ${{ steps.plan.outputs.exitcode }}
@@ -177,7 +176,7 @@ jobs:
       # https://github.com/marketplace/actions/checkout
 
       - name: Checkout
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v4.2.2
         with:
           ref: ${{ inputs.checkout_ref }}
 
@@ -185,7 +184,7 @@ jobs:
       # https://github.com/marketplace/actions/authenticate-to-google-cloud
 
       - name: Authenticate
-        uses: google-github-actions/auth@b7593ed2efd1c1617e1b0254da33b86225adb2a5
+        uses: google-github-actions/auth@b7593ed2efd1c1617e1b0254da33b86225adb2a5 # v2.1.6
         with:
           create_credentials_file: true
           service_account: ${{ inputs.service_account }}
@@ -205,18 +204,13 @@ jobs:
       # https://github.com/marketplace/actions/cache
 
       - name: Restore cache
-        uses: actions/cache/restore@0400d5f644dc74513175e3cd8d07132dd4860809
+        uses: actions/cache/restore@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.0
         with:
           path: |
             ${{ inputs.working_directory }}/.terraform
             ${{ inputs.working_directory }}/.terraform.lock.hcl
             ${{ inputs.working_directory }}/plan.out.gpg
           key: ${{ inputs.opentofu_workspace }}-${{ github.run_id }}-${{ github.run_attempt }}
-
-      # Decrypt - OpenTofu plan.out
-
-      - name: Decrypt
-        run: gpg --quiet --batch --yes --passphrase ${{ secrets.gpg_passphrase }} --output plan.out plan.out.gpg
 
       # Setup OpenTofu
       # https://github.com/marketplace/actions/opentofu-setup-tofu
@@ -232,7 +226,7 @@ jobs:
 
       - name: OpenTofu summary
         continue-on-error: true
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         env:
           TEST_STDOUT: ${{ steps.apply.outputs.stdout }}
         with:
