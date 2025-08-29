@@ -21,6 +21,7 @@ jobs:
       checkout_ref: ${{ github.ref }}
       github_environment: "Production: Main"
       service_account: plt-lz-testing-github@plt-lz-terraform-tf56-prod.iam.gserviceaccount.com
+      opentofu_kms_encryption_key: projects/plt-lz-backend-tf5f-prod/locations/us/keyRings/state-encryption/cryptoKeys/default
       opentofu_plan_args: -var-file=tfvars/production.tfvars
       opentofu_state_bucket: plt-lz-testing-53a5-prod
       opentofu_version: ${{ vars.OPENTOFU_VERSION }}
