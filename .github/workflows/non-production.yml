@@ -21,7 +21,7 @@ jobs:
       service_account: plt-lz-testing-github@plt-lz-backend-tfa3-nonprod.iam.gserviceaccount.com
       opentofu_kms_encryption_key: projects/plt-lz-backend-tfa3-nonprod/locations/us/keyRings/state-encryption/cryptoKeys/default
       opentofu_plan_args: -var-file=tfvars/non-production.tfvars
-      opentofu_state_bucket: plt-lz-testing-ae26-nonprod
+      opentofu_state_bucket: plt-lz-testing-ecf2-nonprod
       opentofu_version: ${{ vars.OPENTOFU_VERSION }}
       opentofu_workspace: main-non-production
       working_directory: tests/plan-and-apply
