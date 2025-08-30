@@ -7,7 +7,7 @@ terraform {
   # fallback encryption methods for state and plan files for bootstrapping.
 
   encryption {
-    method "unencrypted" "migrate" {}
+    # method "unencrypted" "migrate" {}
 
     key_provider "gcp_kms" "default" {
       kms_encryption_key = var.kms_encryption_key
@@ -19,21 +19,21 @@ terraform {
     }
 
     plan {
-      method = method.aes_gcm.default
-      #enforced = true
+      method   = method.aes_gcm.default
+      enforced = true
 
-      fallback {
-        method = method.unencrypted.migrate
-      }
+      # fallback {
+      #   method = method.unencrypted.migrate
+      # }
     }
 
     state {
-      method = method.aes_gcm.default
-      #enforced = true
+      method   = method.aes_gcm.default
+      enforced = true
 
-      fallback {
-        method = method.unencrypted.migrate
-      }
+      # fallback {
+      #   method = method.unencrypted.migrate
+      # }
     }
   }
 
