@@ -16,3 +16,7 @@ variable "project_folder_id" {
 variable "state_bucket" {
   type = string
 }
+
+variable "state_prefix" {
+  type = string
+}

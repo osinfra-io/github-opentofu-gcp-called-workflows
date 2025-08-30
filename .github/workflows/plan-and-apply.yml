@@ -56,6 +56,7 @@ env:
 
   TF_VAR_kms_encryption_key: ${{ inputs.opentofu_kms_encryption_key }}
   TF_VAR_state_bucket: ${{ inputs.opentofu_state_bucket }}
+  TF_VAR_state_prefix: ${{ github.event.repository.name }}
 
   # If you use private modules you'll need this env variable to use
   # the same ssh-agent socket value across all jobs & steps.
