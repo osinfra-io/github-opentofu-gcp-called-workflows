@@ -36,9 +36,6 @@ on:
         type: string
 
     secrets:
-      gpg_passphrase:
-        required: true
-
       # Uncomment if you have private modules
 
       # ssh_key:
@@ -62,7 +59,6 @@ env:
   # the same ssh-agent socket value across all jobs & steps.
 
   # SSH_AUTH_SOCK: /tmp/ssh_agent.sock
-
 
 jobs:
   plan:
