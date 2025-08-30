@@ -29,5 +29,3 @@ jobs:
       opentofu_workspace: main-sandbox
       working_directory: tests/plan-and-apply
       workload_identity_provider: projects/746490462722/locations/global/workloadIdentityPools/github-actions/providers/github-actions-oidc
-    secrets:
-      gpg_passphrase: ${{ secrets.GPG_PASSPHRASE }}

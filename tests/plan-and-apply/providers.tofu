@@ -37,7 +37,6 @@ terraform {
     }
   }
 
-
   # Requiring Providers
   # https://opentofu.org/docs/language/providers/requirements#requiring-providers
 
