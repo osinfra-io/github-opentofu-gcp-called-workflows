@@ -17,6 +17,10 @@ variable "state_bucket" {
   type = string
 }
 
+variable "state_kms_encryption_key" {
+  type = string
+}
+
 variable "state_prefix" {
   type = string
 }
