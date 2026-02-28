@@ -2,8 +2,9 @@
 # https://github.com/osinfra-io/opentofu-google-project
 
 module "project" {
-  source = "github.com/osinfra-io/opentofu-google-project?ref=f00d14e22e192f63d910cabd73b04340281a9713" # v0.4.6
+  source = "github.com/osinfra-io/opentofu-google-project?ref=912e5f1e334e46f8048109e79ed4f30b32c036f1" # v0.6.0
 
+  billing_account                 = var.project_billing_account
   cis_2_2_logging_sink_project_id = var.project_cis_2_2_logging_sink_project_id
   description                     = "workflow"
   folder_id                       = var.project_folder_id
